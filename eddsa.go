@@ -52,6 +52,9 @@ type Curve interface {
 	// You can use this to construct EdXph (for some supported X) from EdX.
 	// If preferred prehash is unknown, returns zero values.
 	PreferredPrehash() (prehash crypto.Hash, prehashName string) // e.g. "SHA512"
+
+	// SigToPub returns the public key that created the given signature
+	SigToPub(sig []byte) ([]byte, error)
 }
 
 // PublicKey represents an EdDSA public key.
@@ -90,3 +93,4 @@ func (pub *PublicKey) Verify(data, sig []byte) bool {
 }
 
 var errInvalidPrivateKey = errors.New("invalid private key")
+var errInvalidSignature = errors.New("invalid signature")

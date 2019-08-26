@@ -20,8 +20,14 @@ fixed-length arrays if you need to.
 It is designed to allow other curves to be implemented in future, such as Curve448.
 In this regard, the design of this package closely follows `crypto/elliptic`.
 
+Build
+-------
+export GOPATH=$PWD
+git clone https://github.com/core-coin/eddsa.git src/eddsa
+cd src/eddsa
+go build eddsa.go ed448.go
+
 Licence
 -------
-
     © 2015 Hugo Landau <hlandau@devever.net>  MIT License
 
