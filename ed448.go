@@ -48,6 +48,24 @@ func (ed448Impl) GenerateKey(rand io.Reader) (priv *PrivateKey, err error) {
 	return
 }
 
+func (ed448Impl) Unmarshal(buffer []byte) (priv *PrivateKey, err error) {
+	if len(buffer) != ed448_privkey_size {
+		return nil, errInvalidPrivateKey
+	}
+	priv = &PrivateKey{
+		PublicKey: PublicKey{
+			Curve: Ed448(),
+			X:     make([]byte, ed448_pubkey_size),
+		},
+		D: make([]byte, ed448_privkey_size),
+	}
+
+	copy(priv.X, buffer[56:112])
+	copy(priv.D, buffer[:])
+
+	return
+}
+
 func (ed448Impl) Sign(priv *PrivateKey, data []byte) ([]byte, error) {
 	if len(priv.D) != ed448_privkey_size {
 		return nil, errInvalidPrivateKey

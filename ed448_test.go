@@ -11,20 +11,28 @@ func TestEd448(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-
 	if len(privateKey.D) !=  ed448_privkey_size {
 		t.Fatalf("bad private key length")
 	}
-
 	if len(privateKey.X) != ed448_pubkey_size {
 		t.Fatalf("bad public key length")
 	}
-
 	if bytes.Compare(privateKey.D[56:112], privateKey.X) != 0 {
 		t.Fatalf("bad private key: %v %v", privateKey.D[56:144], privateKey.X)
 	}
 	t.Logf("%v", privateKey.D[56:112])
 	t.Logf("%v", privateKey.X)
+
+	cmpPrivateKey, err := Ed448().Unmarshal(privateKey.D)
+	if err != nil {
+		panic(err)
+	}
+	if bytes.Compare(privateKey.D, cmpPrivateKey.D) != 0 {
+		t.Fatalf("bad private key: %v %v", privateKey.D, cmpPrivateKey.D)
+	}
+	if bytes.Compare(privateKey.X, cmpPrivateKey.X) != 0 {
+		t.Fatalf("bad public key: %v %v", privateKey.X, cmpPrivateKey.X)
+	}
 
 	b := make([]byte, 94)
 	rand.Read(b)
@@ -68,8 +76,6 @@ func TestEd448(t *testing.T) {
 	}
 
 	pubb, err := privateKey.SigToPub(sig)
-	//t.Logf("%v", privateKey.X)
-	//t.Logf("%v", pubb)
 	if err != nil {
 		panic(err)
 	}

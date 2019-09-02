@@ -55,6 +55,9 @@ type Curve interface {
 
 	// SigToPub returns the public key that created the given signature
 	SigToPub(sig []byte) ([]byte, error)
+
+	// Unmarshal converts bytes to EDDSA public and private key
+	Unmarshal(buffer []byte) (*PrivateKey, error)
 }
 
 // PublicKey represents an EdDSA public key.
