@@ -7,6 +7,7 @@ package eddsa
 
 import (
 	"crypto"
+	"crypto/sha512"
 	"errors"
 	"io"
 )
@@ -58,6 +59,9 @@ type Curve interface {
 
 	// Unmarshal converts bytes to EDDSA public and private key
 	Unmarshal(buffer []byte) (*PrivateKey, error)
+
+	// Shared secret
+	ComputeSecret(priv *PrivateKey, pub *PublicKey) (secret [sha512.Size]byte)
 }
 
 // PublicKey represents an EdDSA public key.

@@ -82,4 +82,14 @@ func TestEd448(t *testing.T) {
 	if bytes.Compare(pubb[:], privateKey.X) != 0 {
 		t.Fatalf("SigToPub is wrong")
 	}
+
+	privateKeyB, err := Ed448().GenerateKey(rand.Reader)
+	if err != nil {
+		panic(err)
+	}
+	secretA := Ed448().ComputeSecret(privateKey, &privateKeyB.PublicKey)
+	secretB := Ed448().ComputeSecret(privateKeyB, &privateKey.PublicKey)
+	if bytes.Compare(secretA[:], secretB[:]) != 0 {
+		t.Fatalf("ComputeSecret is wrong")
+	}
 }

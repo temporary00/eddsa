@@ -2,6 +2,7 @@ package eddsa
 
 import (
 	"crypto"
+	"crypto/sha512"
 	"github.com/otrv4/ed448"
 	"io"
 	"reflect"
@@ -33,7 +34,6 @@ func (ed448Impl) GenerateKey(rand io.Reader) (priv *PrivateKey, err error) {
 	if ok != true {
 		return
 	}
-
 	priv = &PrivateKey{
 		PublicKey: PublicKey{
 			Curve: Ed448(),
@@ -41,7 +41,6 @@ func (ed448Impl) GenerateKey(rand io.Reader) (priv *PrivateKey, err error) {
 		},
 		D: make([]byte, ed448_privkey_size),
 	}
-
 	copy(priv.X, pubbuf[:])
 	copy(priv.D, privbuf[:])
 
@@ -86,6 +85,10 @@ func (ed448Impl) Verify(pub *PublicKey, data, sig []byte) bool {
 	}
 
 	return ed448.NewCurve().Verify(*cast_signature(sig[0:ed448_signature_size]), data, *cast_pubkey(pub.X))
+}
+
+func (ed448Impl) ComputeSecret(priv *PrivateKey, pub *PublicKey) (secret [sha512.Size]byte) {
+	return ed448.NewCurve().ComputeSecret(*cast_privkey(priv.D), *cast_pubkey(pub.X))
 }
 
 func (ed448Impl) Name() string {
