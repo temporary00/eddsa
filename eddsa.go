@@ -57,8 +57,11 @@ type Curve interface {
 	// SigToPub returns the public key that created the given signature
 	SigToPub(sig []byte) ([]byte, error)
 
-	// Unmarshal converts bytes to EDDSA public and private key
-	Unmarshal(buffer []byte) (*PrivateKey, error)
+	// converts bytes to a private key object
+	UnmarshalPub(buffer []byte) (*PublicKey, error)
+
+	// converts bytes to a public key object
+	UnmarshalPriv(buffer []byte) (*PrivateKey, error)
 
 	// Shared secret
 	ComputeSecret(priv *PrivateKey, pub *PublicKey) (secret [sha512.Size]byte)
@@ -99,5 +102,6 @@ func (pub *PublicKey) Verify(data, sig []byte) bool {
 	return pub.Curve.Verify(pub, data, sig)
 }
 
+var errInvalidPublicKey = errors.New("invalid public key")
 var errInvalidPrivateKey = errors.New("invalid private key")
 var errInvalidSignature = errors.New("invalid signature")

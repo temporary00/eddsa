@@ -23,7 +23,7 @@ func TestEd448(t *testing.T) {
 	t.Logf("%v", privateKey.D[56:112])
 	t.Logf("%v", privateKey.X)
 
-	cmpPrivateKey, err := Ed448().Unmarshal(privateKey.D)
+	cmpPrivateKey, err := Ed448().UnmarshalPriv(privateKey.D)
 	if err != nil {
 		panic(err)
 	}
@@ -32,6 +32,14 @@ func TestEd448(t *testing.T) {
 	}
 	if bytes.Compare(privateKey.X, cmpPrivateKey.X) != 0 {
 		t.Fatalf("bad public key: %v %v", privateKey.X, cmpPrivateKey.X)
+	}
+
+	cmpPublicKey, err := Ed448().UnmarshalPub(privateKey.PublicKey.X)
+	if err != nil {
+		panic(err)
+	}
+	if bytes.Compare(privateKey.PublicKey.X, cmpPublicKey.X) != 0 {
+		t.Fatalf("bad public key: %v %v", privateKey.PublicKey.X, cmpPublicKey.X)
 	}
 
 	b := make([]byte, 94)
