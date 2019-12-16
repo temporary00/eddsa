@@ -20,8 +20,9 @@ func TestEd448(t *testing.T) {
 	if bytes.Compare(privateKey.D[56:112], privateKey.X) != 0 {
 		t.Fatalf("bad private key: %v %v", privateKey.D[56:144], privateKey.X)
 	}
-	t.Logf("%v", privateKey.D[56:112])
-	t.Logf("%v", privateKey.X)
+	t.Logf("%x", privateKey.D)
+	t.Logf("%x", privateKey.D[56:112])
+	t.Logf("%x", privateKey.X)
 
 	cmpPrivateKey, err := Ed448().UnmarshalPriv(privateKey.D)
 	if err != nil {
