@@ -3,15 +3,16 @@ package eddsa
 import (
 	"crypto"
 	"crypto/sha512"
-	"github.com/otrv4/ed448"
 	"io"
 	"reflect"
 	"unsafe"
+
+	"github.com/core-coin/ed448"
 )
 
 const (
-	ed448_pubkey_size = 56
-	ed448_privkey_size = 144
+	ed448_pubkey_size    = 56
+	ed448_privkey_size   = 144
 	ed448_signature_size = 112
 )
 
@@ -30,14 +31,14 @@ func Ed448() Curve {
 }
 
 func (ed448Impl) GenerateKey(rand io.Reader) (priv *PrivateKey, err error) {
-	privbuf, pubbuf, ok := ed448.NewCurve().GenerateKeys()
+	privbuf, pubbuf, ok := ed448.NewCurve().GenerateKeys(rand)
 	if ok != true {
 		return
 	}
 	priv = &PrivateKey{
 		PublicKey: PublicKey{
 			Curve: Ed448(),
-			X: make([]byte, ed448_pubkey_size),
+			X:     make([]byte, ed448_pubkey_size),
 		},
 		D: make([]byte, ed448_privkey_size),
 	}
@@ -53,14 +54,13 @@ func (ed448Impl) UnmarshalPub(buffer []byte) (pub *PublicKey, err error) {
 	}
 	pub = &PublicKey{
 		Curve: Ed448(),
-		X: make([]byte, ed448_pubkey_size),
+		X:     make([]byte, ed448_pubkey_size),
 	}
 
 	copy(pub.X, buffer)
 
 	return
 }
-
 
 func (ed448Impl) UnmarshalPriv(buffer []byte) (priv *PrivateKey, err error) {
 	if len(buffer) != ed448_privkey_size {
@@ -87,7 +87,7 @@ func (ed448Impl) Sign(priv *PrivateKey, data []byte) ([]byte, error) {
 
 	sig, _ := ed448.NewCurve().Sign(*cast_privkey(priv.D), data)
 
-	signature := make([]byte, ed448_signature_size + ed448_pubkey_size)
+	signature := make([]byte, ed448_signature_size+ed448_pubkey_size)
 	copy(signature, sig[:])
 	copy(signature[ed448_signature_size:], priv.X[:])
 
@@ -95,7 +95,7 @@ func (ed448Impl) Sign(priv *PrivateKey, data []byte) ([]byte, error) {
 }
 
 func (ed448Impl) Verify(pub *PublicKey, data, sig []byte) bool {
-	if len(sig) != ed448_signature_size + ed448_pubkey_size || len(pub.X) != ed448_pubkey_size {
+	if len(sig) != ed448_signature_size+ed448_pubkey_size || len(pub.X) != ed448_pubkey_size {
 		return false
 	}
 
@@ -119,7 +119,7 @@ func (ed448Impl) PreferredPrehash() (crypto.Hash, string) {
 }
 
 func (ed448Impl) SigToPub(sig []byte) ([]byte, error) {
-	if len(sig) != ed448_signature_size + ed448_pubkey_size {
+	if len(sig) != ed448_signature_size+ed448_pubkey_size {
 		return nil, errInvalidSignature
 	}
 
@@ -165,4 +165,3 @@ func cast_signature(s []byte) *[ed448_signature_size]byte {
 
 	return (*[ed448_signature_size]byte)(unsafe.Pointer(reflect.ValueOf(s).Pointer()))
 }
-
