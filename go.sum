@@ -2,6 +2,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/agl/ed25519 v0.0.0-20170116200512-5312a6153412/go.mod h1:WPjqKcmVOxf0XSf3YxCJs6N6AOSrOx3obionmG7T0y0=
 github.com/awnumar/memcall v0.0.0-20191004114545-73db50fd9f80/go.mod h1:S911igBPR9CThzd/hYQQmTc9SWNu3ZHIlCGaWsWsoJo=
 github.com/awnumar/memguard v0.21.0/go.mod h1:+ejY3DekvjnDWBXHwL5xB5p4Il77kDsrIz+UOUNrm2Q=
+github.com/core-coin/ed448 v0.0.0-20200423082241-9d8e0553c6d2 h1:paoJ3Q0zXKTLBB2ukUI2zHoBOSPsY3ZTRiInP/PDUD4=
+github.com/core-coin/ed448 v0.0.0-20200423082241-9d8e0553c6d2/go.mod h1:/S7hge2XKh2GI/dFp551tIsXDGGD6OU/CSRId+/OjII=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/google/renameio v0.1.0/go.mod h1:KWCgfxg9yswjAJkECMjeO8J8rahYeXnNhOm40UhjYkI=
