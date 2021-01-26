@@ -11,17 +11,17 @@ func TestEd448(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	if len(privateKey.D) !=  ed448_privkey_size {
+	if len(privateKey.D) != ed448_privkey_size {
 		t.Fatalf("bad private key length")
 	}
 	if len(privateKey.X) != ed448_pubkey_size {
 		t.Fatalf("bad public key length")
 	}
-	if bytes.Compare(privateKey.D[56:112], privateKey.X) != 0 {
-		t.Fatalf("bad private key: %v %v", privateKey.D[56:144], privateKey.X)
+	if bytes.Compare(privateKey.D[57:114], privateKey.X) != 0 {
+		t.Fatalf("bad private key: %v %v", privateKey.D[57:114], privateKey.X)
 	}
 	t.Logf("%x", privateKey.D)
-	t.Logf("%x", privateKey.D[56:112])
+	t.Logf("%x", privateKey.D[57:114])
 	t.Logf("%x", privateKey.X)
 
 	cmpPrivateKey, err := Ed448().UnmarshalPriv(privateKey.D)
@@ -92,13 +92,4 @@ func TestEd448(t *testing.T) {
 		t.Fatalf("SigToPub is wrong")
 	}
 
-	privateKeyB, err := Ed448().GenerateKey(rand.Reader)
-	if err != nil {
-		panic(err)
-	}
-	secretA := Ed448().ComputeSecret(privateKey, &privateKeyB.PublicKey)
-	secretB := Ed448().ComputeSecret(privateKeyB, &privateKey.PublicKey)
-	if bytes.Compare(secretA[:], secretB[:]) != 0 {
-		t.Fatalf("ComputeSecret is wrong")
-	}
 }

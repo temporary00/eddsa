@@ -2,27 +2,26 @@ package eddsa
 
 import (
 	"crypto"
-	"crypto/sha512"
 	"io"
 	"reflect"
 	"unsafe"
 
-	"github.com/core-coin/ed448"
+	"github.com/core-coin/circl/sign/ed448"
 )
 
 const (
-	ed448_pubkey_size    = 56
-	ed448_privkey_size   = 144
-	ed448_signature_size = 112
+	ed448_pubkey_size    = 57
+	ed448_privkey_size   = 114
+	ed448_signature_size = 114
 )
 
 type ed448Impl struct{}
 
 // Ed448 signature scheme.
 //
-//   Public key size:   32 bytes
-//   Private key size:  144 bytes
-//   Signature size:    144 bytes
+//   Public key size:   57 bytes
+//   Private key size:  114 bytes
+//   Signature size:    114 bytes
 //   Security level:    ~128 bits
 //   Preferred prehash: SHA512
 //
@@ -31,9 +30,9 @@ func Ed448() Curve {
 }
 
 func (ed448Impl) GenerateKey(rand io.Reader) (priv *PrivateKey, err error) {
-	privbuf, pubbuf, ok := ed448.NewCurve().GenerateKeys(rand)
-	if ok != true {
-		return
+	pubbuf, privbuf, err := ed448.GenerateKey(rand)
+	if err != nil {
+		return nil, err
 	}
 	priv = &PrivateKey{
 		PublicKey: PublicKey{
@@ -74,7 +73,7 @@ func (ed448Impl) UnmarshalPriv(buffer []byte) (priv *PrivateKey, err error) {
 		D: make([]byte, ed448_privkey_size),
 	}
 
-	copy(priv.X, buffer[56:112])
+	copy(priv.X, buffer[ed448_pubkey_size:ed448_privkey_size])
 	copy(priv.D, buffer[:])
 
 	return
@@ -85,7 +84,7 @@ func (ed448Impl) Sign(priv *PrivateKey, data []byte) ([]byte, error) {
 		return nil, errInvalidPrivateKey
 	}
 
-	sig, _ := ed448.NewCurve().Sign(*cast_privkey(priv.D), data)
+	sig := ed448.Sign(priv.D, data, "")
 
 	signature := make([]byte, ed448_signature_size+ed448_pubkey_size)
 	copy(signature, sig[:])
@@ -99,11 +98,7 @@ func (ed448Impl) Verify(pub *PublicKey, data, sig []byte) bool {
 		return false
 	}
 
-	return ed448.NewCurve().Verify(*cast_signature(sig[0:ed448_signature_size]), data, *cast_pubkey(pub.X))
-}
-
-func (ed448Impl) ComputeSecret(priv *PrivateKey, pub *PublicKey) (secret [sha512.Size]byte) {
-	return ed448.NewCurve().ComputeSecret(*cast_privkey(priv.D), *cast_pubkey(pub.X))
+	return ed448.Verify(pub.X, data, sig[:ed448_signature_size], "")
 }
 
 func (ed448Impl) Name() string {
